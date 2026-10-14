@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+/*
+ * Barevné tokeny. Kontrast podle WCAG 2.x (ověřeno výpočtem):
+ *   ink #0f172a na frost #f4f7fb   ≈ 16.6:1
+ *   white na night #0f1e3a         ≈ 16.6:1
+ *   white na berry #b4233c         ≈ 6.5:1
+ *   danger #b42318 na white        ≈ 6.6:1
+ *   muted #475569 na white         ≈ 7.6:1
+ *   gold #e8bb4f na night          ≈ 9.2:1
+ *   ice #dbe7f5 na night           ≈ 13.2:1
+ */
+@theme {
+  --color-night: #0f1e3a;
+  --color-night-2: #17305c;
+  --color-frost: #f4f7fb;
+  --color-ice: #dbe7f5;
+  --color-ink: #0f172a;
+  --color-muted: #475569;
+  --color-berry: #b4233c;
+  --color-berry-dark: #921b30;
+  --color-gold: #e8bb4f;
+  --color-danger: #b42318;
+  --color-success: #166534;
+
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Stránka je záměrně jen ve světlém režimu: vánoční paleta je navržená
+   pro světlé pozadí a tmavý hero, a explicitní pozadí zabrání tomu, aby
+   prohlížeč v dark mode podbarvil stránku černě. */
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  background: var(--color-frost);
+  color: var(--color-ink);
+}
+
+/* Honeypot: mimo obrazovku, ne display:none (některé boty pole s display:none přeskakují). */
+.hp-field {
+  position: absolute;
+  left: -10000px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
