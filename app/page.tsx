@@ -52,11 +52,26 @@ function Hero() {
         <h1 className="mt-8 text-[2.6rem] leading-[1.02] font-extrabold tracking-tight uppercase sm:text-7xl">
           Vánoční
           <br />
-          <span className="text-gold">Fongerton</span> 2026
+          <span className="text-gold">Fonger</span>
+          <span className="text-outline-gold">ton</span> 2026
         </h1>
 
-        <p className="mt-5 max-w-xl text-lg text-ice sm:text-xl">
-          Čtyřhry, náhodně losovaní parťáci a předvánoční badminton. {EVENT.dateLabel} na {EVENT.place}.
+        {/* Seznam (ne jeden řetězec s tečkami): na mobilu se zalamuje
+            přednostně mezi položkami a čtečky ho přečtou jako výčet. */}
+        <ul className="mt-6 flex max-w-3xl flex-wrap gap-x-3 gap-y-1.5 text-base font-semibold text-white sm:text-lg">
+          {HIGHLIGHTS.map((item, i) => (
+            <li key={item} className="flex items-baseline gap-3">
+              {i > 0 && (
+                <span className="text-gold" aria-hidden="true">
+                  •
+                </span>
+              )}
+              {item}
+            </li>
+          ))}
+        </ul>
+        <p className="mt-4 max-w-xl text-lg text-ice sm:text-xl">
+          Přijď si zahrát beďas a zapotit se, než se začneš ládovat cukrovím.
         </p>
 
         <div className="mt-8 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
@@ -77,6 +92,13 @@ function Hero() {
     </header>
   );
 }
+
+const HIGHLIGHTS = [
+  "Čtyřhry",
+  "Náhodný los parťáka",
+  "2 skill kategorie",
+  "Medaile pro bednu & Cash prize pro vítěze",
+];
 
 /** Jemné vločky v pozadí hero. Statické SVG, žádná animace. */
 function Snowfield() {
@@ -105,7 +127,8 @@ function Snowfield() {
   );
 }
 
-const INFO: { label: string; value: ReactNode; icon: ReactNode }[] = [
+/** label = malý popisek nahoře, value = hlavní údaj, note = doplněk menším písmem pod ním. */
+const INFO: { label: string; value: ReactNode; note?: string; icon: ReactNode }[] = [
   { label: "Datum", value: EVENT.dateLabel, icon: <IconCalendar /> },
   {
     label: "Místo",
@@ -116,9 +139,9 @@ const INFO: { label: string; value: ReactNode; icon: ReactNode }[] = [
     ),
     icon: <IconPin />,
   },
-  { label: "Čas", value: EVENT.timeLabel, icon: <IconClock /> },
-  { label: "Formát", value: "Čtyřhry (2v2) v obou kategoriích, parťáci se losují náhodně až na místě", icon: <IconUsers /> },
-  { label: "Startovné", value: EVENT.fee, icon: <IconCoin /> },
+  { label: "Čas", value: EVENT.timeLabel, note: EVENT.timeNote, icon: <IconClock /> },
+  { label: "Formát", value: "Čtyřhry • Náhodné dvojice", icon: <IconUsers /> },
+  { label: "Startovné", value: EVENT.feeAmount, note: EVENT.feeNote, icon: <IconCoin /> },
   { label: "Konec registrací", value: EVENT.deadlineLabel, icon: <IconFlag /> },
 ];
 
@@ -127,7 +150,7 @@ function InfoSection() {
     <section aria-labelledby="info-title" className="px-4 py-14 sm:py-20">
       <div className="mx-auto max-w-5xl">
         <h2 id="info-title" className="text-3xl font-extrabold tracking-tight text-ink">
-          Co a kdy
+          Podrobnosti turnaje
         </h2>
         <dl className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {INFO.map((item) => (
@@ -137,7 +160,10 @@ function InfoSection() {
               </div>
               <div>
                 <dt className="text-sm font-semibold text-muted">{item.label}</dt>
-                <dd className="mt-0.5 text-base font-bold leading-snug text-ink">{item.value}</dd>
+                <dd className="mt-0.5 text-base font-bold leading-snug text-ink">
+                  {item.value}
+                  {item.note && <span className="mt-0.5 block text-sm font-medium text-muted">{item.note}</span>}
+                </dd>
               </div>
             </div>
           ))}
@@ -158,12 +184,12 @@ function CategoriesSection() {
           <CategoryCard
             name="Casual"
             tone="ice"
-            text="Nehraju pravidelně, raketu držím po roce a nemám v tom moc skill, jdu si hlavně pinknout na pohodu."
+            text="Nehraju pravidelně, jdu si hlavně pinknout, hýbat se a užít si atmosféru."
           />
           <CategoryCard
             name="Tryhard"
             tone="night"
-            text="Hraju badminton pravidelně, trénoval jsem nebo mám natrénováno a jdu si pro výhru."
+            text="Beďas hraju aktivně, tempo mi nedělá problém a jdu si pro pořádnej zápas."
           />
         </div>
       </div>

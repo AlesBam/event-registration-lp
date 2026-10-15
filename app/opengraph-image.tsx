@@ -32,6 +32,11 @@ const [latin800, ext800] = await Promise.all(
   ),
 );
 
+const OUTLINE_OFFSETS = [
+  [3, 0], [-3, 0], [0, 3], [0, -3],
+  [2, 2], [-2, 2], [2, -2], [-2, -2],
+] as const;
+
 export default async function OpengraphImage() {
   return new ImageResponse(
     (
@@ -64,7 +69,19 @@ export default async function OpengraphImage() {
         <div style={{ display: "flex", flexDirection: "column" }}>
           <div style={{ fontSize: 104, fontWeight: 800, lineHeight: 1, textTransform: "uppercase" }}>Vánoční</div>
           <div style={{ display: "flex", fontSize: 104, fontWeight: 800, lineHeight: 1.05, textTransform: "uppercase" }}>
-            <span style={{ color: "#e8bb4f" }}>Fongerton</span>
+            <span style={{ color: "#e8bb4f" }}>Fonger</span>
+            {/* Obrys jako na webu. Satori (next/og) neumí ani WebkitTextStroke
+                (text zmizel), ani víc textShadow najednou (vykreslil jen část).
+                Proto: 8 zlatých kopií posunutých do stran + navrch kopie
+                v barvě pozadí = vizuálně obrys ~3px. */}
+            <span style={{ display: "flex", position: "relative" }}>
+              {OUTLINE_OFFSETS.map(([x, y]) => (
+                <span key={`${x},${y}`} style={{ position: "absolute", left: x, top: y, color: "#e8bb4f" }}>
+                  ton
+                </span>
+              ))}
+              <span style={{ position: "relative", color: "#11213f" }}>ton</span>
+            </span>
             <span style={{ marginLeft: 28 }}>2026</span>
           </div>
         </div>

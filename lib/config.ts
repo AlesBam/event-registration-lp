@@ -12,22 +12,25 @@
 export const REGISTRATION_DEADLINE_ISO = "2026-11-20T20:00:00+01:00";
 
 /**
- *   = nezlomitelná mezera. Česká typografie nedovoluje rozdělit datum
- * („5. 12. 2026“), číslo a jednotku („200 Kč“) ani dvojici slov místa
+ * \u00a0 = nezlomitelná mezera. Česká typografie nedovoluje rozdělit datum
+ * („5. 12. 2026“), číslo a jednotku („400 Kč“) ani dvojici slov místa
  * na konec a začátek řádku. Na širokém displeji se jinak hero text zalomil
  * jako „… 5.“ / „12. 2026“.
  */
 export const EVENT = {
   name: "Vánoční Fongerton 2026",
   tagline: "Badmintonový turnaj",
-  dateLabel: "5. 12. 2026",
-  dateLong: "sobota 5. prosince 2026",
-  place: "Hamr Braník",
+  dateLabel: "5.\u00a012.\u00a02026",
+  dateLong: "sobota 5.\u00a0prosince 2026",
+  place: "Hamr\u00a0Braník",
   placeMapUrl: "https://www.google.com/maps/search/?api=1&query=Hamr+Bran%C3%ADk",
-  timeLabel: "od 16:00, cca 3–4 hodiny",
+  // Hlavní údaj + doplňující poznámka (v info kartách menším písmem pod ním).
+  timeLabel: "od\u00a016:00",
+  timeNote: "(cca 3–4\u00a0hodiny)",
   meetingTime: "15:50",
-  fee: "200 Kč, platba hotově na místě",
-  deadlineLabel: "20. 11. 2026 ve 20:00",
+  feeAmount: "400\u00a0Kč",
+  feeNote: "(QR kód nebo cash na místě)",
+  deadlineLabel: "20.\u00a011.\u00a02026 ve\u00a020:00",
 } as const;
 
 export const CONTACT = {

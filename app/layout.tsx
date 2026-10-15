@@ -23,7 +23,7 @@ function siteUrl(): URL {
   return new URL(`http://localhost:${process.env.PORT ?? 3000}`);
 }
 
-const description = `Badmintonový turnaj ve čtyřhrách ${EVENT.dateLabel} na ${EVENT.place}. Kategorie Casual i Tryhard, startovné 200 Kč. Registrace do ${EVENT.deadlineLabel}.`;
+const description = `Badmintonový turnaj ve čtyřhrách ${EVENT.dateLabel} na ${EVENT.place}. Kategorie Casual i Tryhard, startovné 400 Kč. Registrace do ${EVENT.deadlineLabel}.`;
 
 export const metadata: Metadata = {
   metadataBase: siteUrl(),

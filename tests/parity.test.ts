@@ -12,14 +12,14 @@ const gs = loadAppsScript();
 
 const PHONES = [
   "777123456", "777 123 456", "+420 777 123 456", "+420777123456", "00420777123456",
-  "420777123456", "777-123-456", "(+420) 777 123 456", "777 123 456",
+  "420777123456", "777-123-456", "(+420) 777 123 456", "777\u00a0123\u00a0456",
   "", "77712345", "7771234567", "222123456", "+421777123456", "0777123456",
   "777123abc", "420123456", "+420+420777123456", "=1+1", "603 123 456",
 ];
 
 const NAMES = ["Jan Novák", "J", "  Jo  ", "a".repeat(100), "a".repeat(101), "   ", "=1+1", "Jan\u0000N", "😀😀", "😀".repeat(100)];
 
-const base = { name: "Jan Novák", phone: "777123456", category: "casual", racket: "", afterParty: "" };
+const base = { name: "Jan Novák", phone: "777123456", category: "casual", racket: "own", afterParty: "yes" };
 
 describe("parita klient (Zod) × skript (Code.gs)", () => {
   it.each(PHONES)("normalizePhone(%j) dává stejný výsledek", (p) => {
@@ -38,8 +38,9 @@ describe("parita klient (Zod) × skript (Code.gs)", () => {
 
   it.each([
     { category: "tryhard" }, { category: "x" }, { category: undefined },
-    { racket: "own" }, { racket: "borrow" }, { racket: "x" },
+    { racket: "own" }, { racket: "borrow" }, { racket: "x" }, { racket: "" }, { racket: undefined },
     { afterParty: "yes" }, { afterParty: "no" }, { afterParty: "maybe" }, { afterParty: "x" },
+    { afterParty: "" }, { afterParty: undefined },
   ])("validace enumů %j se shoduje", (patch) => {
     const input = { ...base, ...patch };
     expect(registrationSchema.safeParse(input).success).toBe(gs.validateRegistration(input).ok);

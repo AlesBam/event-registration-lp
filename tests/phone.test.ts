@@ -15,8 +15,8 @@ describe("normalizePhone (Code.gs)", () => {
     ["777-123-456", "+420777123456"],
     ["(+420) 777 123 456", "+420777123456"],
     ["  603 123 456  ", "+420603123456"],
-    ["777 123 456", "+420777123456"], // nezlomitelné mezery z WhatsAppu
-    ["+420 777 123 456", "+420777123456"],
+    ["777\u00a0123\u00a0456", "+420777123456"], // nezlomitelné mezery z WhatsAppu
+    ["+420\u202f777\u202f123\u202f456", "+420777123456"],
   ])("přijme %j → %s", (input, expected) => {
     expect(gs.normalizePhone(input)).toBe(expected);
   });

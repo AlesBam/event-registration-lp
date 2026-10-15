@@ -35,11 +35,18 @@ describe("validateRegistration (Code.gs)", () => {
     });
   });
 
-  it("volitelná pole: chybí / null / '' → prázdný string", () => {
+  it("raketa a pivo/jídlo jsou povinné: chybí / null / '' → chyba u pole", () => {
     for (const empty of [undefined, null, ""]) {
-      const r = gs.validateRegistration({ ...valid, racket: empty, afterParty: empty });
-      expect(r).toMatchObject({ ok: true, value: { racket: "", afterParty: "" } });
+      expectError({ ...valid, racket: empty }, "racket");
+      expectError({ ...valid, afterParty: empty }, "afterParty");
     }
+  });
+
+  it("povinná pole mají vlastní hlášku", () => {
+    expect(gs.validateRegistration({ ...valid, racket: "" })).toMatchObject({ message: gs.MESSAGES.racketRequired });
+    expect(gs.validateRegistration({ ...valid, afterParty: "" })).toMatchObject({
+      message: gs.MESSAGES.afterPartyRequired,
+    });
   });
 
   it("všechny povolené hodnoty enumů", () => {
@@ -88,9 +95,10 @@ describe("validateRegistration (Code.gs)", () => {
     expectError({ ...valid, category: "toString" }, "category"); // klíč z prototypu
   });
 
-  it("volitelná pole: jen z enumu", () => {
+  it("raketa a pivo/jídlo: jen z enumu", () => {
     expectError({ ...valid, racket: "maybe" }, "racket");
     expectError({ ...valid, racket: 1 }, "racket");
+    expectError({ ...valid, racket: "toString" }, "racket"); // klíč z prototypu
     expectError({ ...valid, afterParty: "Ano" }, "afterParty");
     expectError({ ...valid, afterParty: "__proto__" }, "afterParty");
   });

@@ -158,7 +158,7 @@ export function RegistrationForm() {
         </p>
         <p className="mt-4 text-base leading-relaxed text-muted">
           Brzy tě přidáme do WhatsApp skupiny turnaje, kde budou případné změny a info. Startovné{" "}
-          {"200 Kč"} si připrav v hotovosti.
+          {EVENT.feeAmount} zaplatíš na místě QR kódem nebo hotově.
         </p>
       </div>
     );
@@ -185,6 +185,10 @@ export function RegistrationForm() {
         <input id="website" name="website" type="text" tabIndex={-1} autoComplete="off" defaultValue="" />
       </div>
 
+      {/* Povinné je všechno, proto jedna věta místo „(povinné)“ u každého pole.
+          Pro čtečky má každé pole aria-required. */}
+      <p className="text-sm text-muted">Všechna pole jsou povinná.</p>
+
       <TextField
         name="name"
         label="Jméno a příjmení"
@@ -208,12 +212,11 @@ export function RegistrationForm() {
       <RadioGroup
         name="category"
         legend="Kategorie"
-        required
         error={errors.category}
         columns={2}
         options={[
-          { value: "casual", label: "Casual", description: "Jdu si hlavně pinknout na pohodu." },
-          { value: "tryhard", label: "Tryhard", description: "Hraju pravidelně a jdu si pro výhru." },
+          { value: "casual", label: "Casual", description: "Jdu si hlavně pinknout a užít si atmosféru." },
+          { value: "tryhard", label: "Tryhard", description: "Hraju aktivně a jdu si pro pořádnej zápas." },
         ]}
       />
 
@@ -268,7 +271,7 @@ export function RegistrationForm() {
           {submitting ? "Odesílám…" : "Přihlásit se"}
         </button>
         <p className="text-center text-sm text-muted">
-          Startovné {EVENT.fee}. Registrace do {EVENT.deadlineLabel}.
+          Startovné {EVENT.feeAmount} {EVENT.feeNote}. Registrace do {EVENT.deadlineLabel}.
         </p>
       </div>
     </form>
@@ -307,7 +310,7 @@ function TextField({ name, label, type = "text", inputMode, autoComplete, maxLen
   return (
     <div>
       <label htmlFor={name} className="block text-base font-bold text-ink">
-        {label} <span className="font-medium text-muted">(povinné)</span>
+        {label}
       </label>
       <input
         id={name}
@@ -340,7 +343,6 @@ type RadioGroupProps = {
   name: RegistrationField;
   legend: string;
   options: RadioOption[];
-  required?: boolean;
   hint?: string;
   error?: string;
   columns: 2 | 3;
@@ -352,7 +354,7 @@ type RadioGroupProps = {
  * Nativní <input type="radio"> zůstává (vizuálně skrytý), takže funguje
  * klávesnice (šipky), čtečky i fieldset/legend.
  */
-function RadioGroup({ name, legend, options, required, hint, error, columns }: RadioGroupProps) {
+function RadioGroup({ name, legend, options, hint, error, columns }: RadioGroupProps) {
   const errorId = `${name}-error`;
   const hintId = `${name}-hint`;
   const describedBy = [error ? errorId : null, hint ? hintId : null].filter(Boolean).join(" ") || undefined;
@@ -362,13 +364,11 @@ function RadioGroup({ name, legend, options, required, hint, error, columns }: R
     // role=radiogroup: aria-required/aria-invalid patří na skupinu, ne na jednotlivé radio.
     <fieldset
       role="radiogroup"
-      aria-required={required ? true : undefined}
+      aria-required="true"
       aria-invalid={error ? true : undefined}
       aria-describedby={describedBy}
     >
-      <legend className="text-base font-bold text-ink">
-        {legend} <span className="font-medium text-muted">{required ? "(povinné)" : "(nepovinné)"}</span>
-      </legend>
+      <legend className="text-base font-bold text-ink">{legend}</legend>
       {hint && (
         <p id={hintId} className="mt-1 text-sm text-muted">
           {hint}

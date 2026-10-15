@@ -48,6 +48,24 @@ body {
   color: var(--color-ink);
 }
 
+/*
+ * Obrysové písmo (hero „TON“): jen zlatá linka, bez výplně.
+ * - Tloušťka v em, aby rostla s písmem: na mobilu i desktopu stejný poměr
+ *   jako ve schváleném návrhu (24px písmo / 1.5px linka ≈ 0.06em).
+ * - Výchozí stav je PLNÁ zlatá. Průhlednou výplň zapneme až uvnitř @supports,
+ *   takže prohlížeč bez podpory obrysu ukáže čitelný zlatý text, ne prázdné místo.
+ */
+.text-outline-gold {
+  color: var(--color-gold);
+}
+
+@supports (-webkit-text-stroke: 1px currentColor) {
+  .text-outline-gold {
+    color: transparent;
+    -webkit-text-stroke: 0.06em var(--color-gold);
+  }
+}
+
 /* Honeypot: mimo obrazovku, ne display:none (některé boty pole s display:none přeskakují). */
 .hp-field {
   position: absolute;

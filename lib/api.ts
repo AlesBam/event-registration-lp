@@ -65,8 +65,8 @@ export function toPayload(input: RegistrationInput, website: string): Registrati
     name: input.name,
     phone: input.phone,
     category: input.category,
-    racket: input.racket ?? "",
-    afterParty: input.afterParty ?? "",
+    racket: input.racket,
+    afterParty: input.afterParty,
     website,
   };
 }

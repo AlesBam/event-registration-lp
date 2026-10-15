@@ -20,13 +20,14 @@ export const MESSAGES = {
   phoneRequired: "Vyplň telefonní číslo.",
   phoneInvalid: "Zadej české mobilní číslo (9 číslic, začíná 6 nebo 7), např. 777 123 456.",
   categoryRequired: "Vyber kategorii.",
-  optionInvalid: "Neplatná volba.",
+  racketRequired: "Vyber, jestli máš vlastní raketu.",
+  afterPartyRequired: "Vyber, jestli půjdeš na pivo/jídlo.",
 } as const;
 
 /** Kopie normalizePhone z Code.gs. Viz komentář tam. */
 export function normalizePhone(input: string): string | null {
   if (input.length > 40) return null;
-  let s = input.replace(/[\s  -​ ().\-‐-―]/g, "");
+  let s = input.replace(/[\s\u00a0\u2000-\u200b\u202f().\-\u2010-\u2015]/g, "");
   if (s.startsWith("+420")) s = s.slice(4);
   else if (s.startsWith("00420")) s = s.slice(5);
   else if (/^420\d{9}$/.test(s)) s = s.slice(3);
@@ -36,9 +37,6 @@ export function normalizePhone(input: string): string | null {
 
 /** Délka v Unicode kódových bodech (emoji = 1), stejně jako Array.from v Code.gs. */
 const codePointLength = (s: string) => Array.from(s).length;
-
-/** Prázdný string z nevybraného radia → undefined, aby volitelné pole prošlo. */
-const emptyToUndefined = (v: unknown) => (v === "" || v === null ? undefined : v);
 
 export const registrationSchema = z.object({
   name: z
@@ -56,12 +54,10 @@ export const registrationSchema = z.object({
     .trim()
     .min(1, MESSAGES.phoneRequired)
     .refine((s) => normalizePhone(s) !== null, MESSAGES.phoneInvalid),
+  // Všechna pole jsou povinná. Nevybrané radio = "" nebo chybí → chyba enumu.
   category: z.enum(CATEGORY_VALUES, { error: MESSAGES.categoryRequired }),
-  racket: z.preprocess(emptyToUndefined, z.enum(RACKET_VALUES, { error: MESSAGES.optionInvalid }).optional()),
-  afterParty: z.preprocess(
-    emptyToUndefined,
-    z.enum(AFTER_PARTY_VALUES, { error: MESSAGES.optionInvalid }).optional(),
-  ),
+  racket: z.enum(RACKET_VALUES, { error: MESSAGES.racketRequired }),
+  afterParty: z.enum(AFTER_PARTY_VALUES, { error: MESSAGES.afterPartyRequired }),
 });
 
 export type RegistrationInput = z.infer<typeof registrationSchema>;

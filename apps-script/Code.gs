@@ -87,7 +87,8 @@ const MESSAGES = {
   phoneRequired: 'Vyplň telefonní číslo.',
   phoneInvalid: 'Zadej české mobilní číslo (9 číslic, začíná 6 nebo 7), např. 777 123 456.',
   categoryRequired: 'Vyber kategorii.',
-  optionInvalid: 'Neplatná volba.',
+  racketRequired: 'Vyber, jestli máš vlastní raketu.',
+  afterPartyRequired: 'Vyber, jestli půjdeš na pivo/jídlo.',
   duplicate:
     'Na tohle číslo už registrace existuje. Pokud jsi to právě zkoušel(a) odeslat, registrace nejspíš prošla.',
   closed: 'Registrace je uzavřená.',
@@ -115,7 +116,7 @@ const MESSAGES = {
 function normalizePhone(input) {
   if (typeof input !== 'string' || input.length > 40) return null;
 
-  let s = input.replace(/[\s  -​ ().\-‐-―]/g, '');
+  let s = input.replace(/[\s\u00a0\u2000-\u200b\u202f().\-\u2010-\u2015]/g, '');
 
   if (s.indexOf('+420') === 0) {
     s = s.slice(4);
@@ -192,18 +193,18 @@ function validateRegistration(input) {
     return { ok: false, field: 'phone', message: MESSAGES.phoneInvalid };
   }
 
-  // Kategorie (povinná, enum)
-  if (typeof input.category !== 'string' || !hasOwn_(CATEGORY_LABELS, input.category)) {
-    return { ok: false, field: 'category', message: MESSAGES.categoryRequired };
-  }
+  // Výběrová pole: všechna povinná, jen hodnoty z enumu. Chybějící, prázdná
+  // i nepovolená hodnota dávají stejnou hlášku (z formuláře přijde jen
+  // „nevybráno“; cokoli jiného posílá někdo mimo formulář).
+  const category = requiredEnum_(input.category, CATEGORY_LABELS);
+  if (category === null) return { ok: false, field: 'category', message: MESSAGES.categoryRequired };
 
-  // Volitelná pole: chybí / null / "" → prázdný string, jinak musí být z enumu.
-  const racket = optionalEnum_(input.racket, RACKET_LABELS);
-  if (racket === null) return { ok: false, field: 'racket', message: MESSAGES.optionInvalid };
+  const racket = requiredEnum_(input.racket, RACKET_LABELS);
+  if (racket === null) return { ok: false, field: 'racket', message: MESSAGES.racketRequired };
 
-  const afterParty = optionalEnum_(input.afterParty, AFTER_PARTY_LABELS);
+  const afterParty = requiredEnum_(input.afterParty, AFTER_PARTY_LABELS);
   if (afterParty === null) {
-    return { ok: false, field: 'afterParty', message: MESSAGES.optionInvalid };
+    return { ok: false, field: 'afterParty', message: MESSAGES.afterPartyRequired };
   }
 
   return {
@@ -211,7 +212,7 @@ function validateRegistration(input) {
     value: {
       name: name,
       phone: phone,
-      category: CATEGORY_LABELS[input.category],
+      category: category,
       racket: racket,
       afterParty: afterParty,
     },
@@ -288,9 +289,11 @@ function hasOwn_(obj, key) {
   return Object.prototype.hasOwnProperty.call(obj, key);
 }
 
-/** Vrátí label, '' pro nevyplněno, nebo null pro nepovolenou hodnotu. */
-function optionalEnum_(value, labels) {
-  if (value === undefined || value === null || value === '') return '';
+/**
+ * Vrátí label pro povolenou hodnotu, jinak null (chybí, prázdná i nepovolená).
+ * hasOwn_ místo `value in labels`, aby neprošly klíče z prototypu (toString…).
+ */
+function requiredEnum_(value, labels) {
   if (typeof value !== 'string' || !hasOwn_(labels, value)) return null;
   return labels[value];
 }
